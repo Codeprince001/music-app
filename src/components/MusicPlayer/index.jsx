@@ -33,13 +33,13 @@ const MusicPlayer = () => {
   };
 
   const handleNextSong = () => {
-    dispatch(playPause(false));
 
     if (!shuffle) {
       dispatch(nextSong((currentIndex + 1) % currentSongs.length));
     } else {
       dispatch(nextSong(Math.floor(Math.random() * currentSongs.length)));
     }
+    dispatch(playPause(false));
   };
 
   const handlePrevSong = () => {
@@ -50,6 +50,7 @@ const MusicPlayer = () => {
     } else {
       dispatch(prevSong(currentIndex - 1));
     }
+    dispatch(playPause(false));
   };
 
   return (
