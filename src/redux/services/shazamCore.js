@@ -5,8 +5,12 @@ const songAdapter = createEntityAdapter({
   sortComparer: (a, b) => b.date.localeCompare(a.date)
 });
 
-const initialState = songAdapter.getInitialState();
-
+const initialState = songAdapter.getInitialState(
+  {
+    ids: JSON.parse(localStorage.getItem("songs")) || [],
+    entities: {},
+  }
+);
 
 export const ShazamCoreApi = createApi({
   reducerPath: "shazamCorePath",
@@ -19,17 +23,23 @@ export const ShazamCoreApi = createApi({
   }),
   tagTypes: ["Songs"],
   refetchOnReconnect: true,
+  refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
     getTopCharts: builder.query({
-      query: (params) => `https://shazam.p.rapidapi.com/charts/track?locale=en-US&pageSize=20&startFrom=0`,
+      query: () => `https://shazam.p.rapidapi.com/charts/track?locale=en-US&pageSize=20&startFrom=0`,
       transformedPosts: responseData => {
         const loadedSongs = responseData?.track?.map((song, index) => ({ ...song, id: index.toString() }));
+        const lcs = localStorage.setItem("songs", JSON.stringify({ ids: songAdapter.getSelectors().selectIds(loadedSongs) }));
+        console.log(lcs);
         return songAdapter.setAll(initialState, loadedSongs);
       },
       providesTags: ["Songs"]
+    }),
+    getSongDetails: builder.query({
+      query: (songid) => `https://shazam.p.rapidapi.com/shazam-songs/get-details?id=${songid}`
     }),
   })
 });
 
 
-export const { useGetTopChartsQuery } = ShazamCoreApi;
+export const { useGetTopChartsQuery, useGetSongDetailsQuery } = ShazamCoreApi;
