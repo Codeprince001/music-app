@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
-import { useGetTopChartsQuery } from "../redux/services/shazamCore";
+import { useGetSongDetails_2Query, useGetTopChartsQuery } from "../redux/services/shazamCore";
 
 
 
-const DetailsHeader = ({ artistId, artistData, songData }) => {
+const DetailsHeader = ({ artistId, artistData, songData, songid, shazamSongId }) => {
+
+  const { data, isFetching } = useGetSongDetails_2Query(shazamSongId);
+  console.log(shazamSongId);
+  console.log(data);
 
 
   return (
