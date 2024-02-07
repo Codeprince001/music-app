@@ -30,7 +30,6 @@ export const ShazamCoreApi = createApi({
       transformedPosts: responseData => {
         const loadedSongs = responseData?.track?.map((song, index) => ({ ...song, id: index.toString() }));
         const lcs = localStorage.setItem("songs", JSON.stringify({ ids: songAdapter.getSelectors().selectIds(loadedSongs) }));
-        console.log(lcs);
         return songAdapter.setAll(initialState, loadedSongs);
       },
       providesTags: ["Songs"]
@@ -38,8 +37,11 @@ export const ShazamCoreApi = createApi({
     getSongDetails: builder.query({
       query: (songid) => `https://shazam.p.rapidapi.com/shazam-songs/get-details?id=${songid}`
     }),
+    getSongDetails_2: builder.query({
+      query: (songid) => `https://shazam.p.rapidapi.com/songs/v2/get-details?id=${songid}`
+    })
   })
 });
 
 
-export const { useGetTopChartsQuery, useGetSongDetailsQuery } = ShazamCoreApi;
+export const { useGetTopChartsQuery, useGetSongDetailsQuery, useGetSongDetails_2Query } = ShazamCoreApi;
