@@ -15,15 +15,17 @@ const SongDetails = () => {
   const [shazamSongId, setShazamSongId] = useState();
   const { setActiveSong, isPlaying } = useSelector((state) => state.player);
 
-
   useEffect(() => {
     let Mounted = false;
     dispatch(ShazamCoreApi.endpoints.getSongDetails.initiate(songid), { forceRefetch: true }).unwrap()
       .then(result => {
         setIsLoading(true);
         setSongDetailData(result);
+        console.log(result);
+        // get song lyrics id from fetched data to access song lyrics by id
         setLyricsId(result?.resources?.[`shazam-songs`]?.[songid].relationships?.lyrics?.data[0].id);
-        setSongDetailData(result?.resources?.[`shazam-songs`]?.[songid].relationships?.songs?.data[0].id);
+        console.log(lyricsId);
+        console.log(setSongDetailData);
       }).catch(error => {
         console.log(error);
         setIsLoading(false);
@@ -47,7 +49,10 @@ const SongDetails = () => {
 
       <div className="mt-5 w-[500px] m-auto">
         {
-          songDetailData && <p className="text-white text-1xl font-bold text-center">{songDetailData?.resources?.lyrics?.[lyricsId]?.attributes?.text.join(" \n ")}</p>
+          songDetailData ? <p className="text-white text-1xl font-bold text-center">{songDetailData?.resources?.lyrics?.[lyricsId]?.attributes?.text.map((line, index) => {
+            return <p key={index}>{line}</p>;
+          })}</p>
+            : <p className="text-white text-3xl font-bold text-center">No Lyrics</p>
         }
       </div>
     </div>
