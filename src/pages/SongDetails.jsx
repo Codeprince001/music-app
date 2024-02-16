@@ -12,7 +12,9 @@ const SongDetails = () => {
   const [songDetailData, setSongDetailData] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [lyricsId, setLyricsId] = useState();
+  const [title, setTitle] = useState();
   const [shazamSongId, setShazamSongId] = useState();
+  const [artistArtwork, setArtistArtwork] = useState();
   const { setActiveSong, isPlaying } = useSelector((state) => state.player);
 
   useEffect(() => {
@@ -21,11 +23,11 @@ const SongDetails = () => {
       .then(result => {
         setIsLoading(true);
         setSongDetailData(result);
-        console.log(result);
         // get song lyrics id from fetched data to access song lyrics by id
         setLyricsId(result?.resources?.[`shazam-songs`]?.[songid].relationships?.lyrics?.data[0].id);
+        setArtistArtwork(result?.resources?.[`shazam-songs`]?.[songid].attributes?.images?.artistAvatar);
+        setTitle(result?.resources?.[`shazam-songs`]?.[songid].attributes?.title);
         console.log(lyricsId);
-        console.log(setSongDetailData);
       }).catch(error => {
         console.log(error);
         setIsLoading(false);
@@ -41,7 +43,7 @@ const SongDetails = () => {
 
   return (
     <div className="flex flex-col">
-      {/* <DetailsHeader artistId={""} songData={songDetailData} songid={songid} songDetailId={shazamSongId} /> */}
+      <DetailsHeader artistArtwork={artistArtwork} songData={songDetailData} songid={songid} songDetailId={shazamSongId} title={title} />
 
       <div className="mb-10">
         <h2 className="text-white text-3xl font-bold">Lyrics:</h2>
