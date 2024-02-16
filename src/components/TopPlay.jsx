@@ -18,7 +18,7 @@ const TopChartCard = ({ song, i, isPlaying, activeSong, handlePauseClick, handle
 
 
   return (
-    <div className="w-full flex flex-row item-centre hover:bg-[#473e66] py-2 p-1 rounded-lg cursor-pointer mb-2 ">
+    <div className="w-full flex flex-row item-centre hover:bg-[#473e66] py-2 p-1 rounded-lg cursor-pointer mb-2 sm:pt-12:">
       <h3 className="font-bold text-base text-white mr-3">{i + 1}.</h3>
 
       <div className="flex-1 flex flex-row justify-between items-center">
@@ -26,12 +26,12 @@ const TopChartCard = ({ song, i, isPlaying, activeSong, handlePauseClick, handle
           <img src={song?.images?.background} alt="artist image" className="w-20 h-20 rounded-lg mr-4" /> : <img src={noImg} alt={song?.title} className="w-20 h-20 rounded-lg mr-4" />
         }
         <div className="flex-1 flex flex-col justify-center mx-3">
-          <Link to={`#`}>
+          <Link to={`/songs/${song.key}`}>
             <p className="text-lg from-neutral-600 text-white">
               {song.title}
             </p>
           </Link>
-          <Link to={`#`}>
+          <Link to={`/songs/${song?.artists[0].adamid}`}>
             <p className="text-base font-bold text-gray-300 mt-1">
               {song?.subtitle}
             </p>
@@ -69,7 +69,7 @@ const TopPlay = () => {
   const topPlays = data?.tracks?.slice(0, 5);
 
   return (
-    <div>
+    <div className="mt-4 xl:mr-4">
       <div ref={divRef} className="xl:ml-6 ml-0 xl:mb-0 mb-6 flex-1 xl:max-w-[500px] max-w-full flex flex-col">
         <div className="w-full flex flex-col">
           <div className="flex flex-row justify-between items-center">
