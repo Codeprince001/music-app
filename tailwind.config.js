@@ -49,7 +49,7 @@ module.exports = {
         '.custom-scrollbar': {
           /* For WebKit browsers (Chrome, Safari) */
           '&::-webkit-scrollbar': {
-            width: '0px',
+            width: '5px',
           },
 
           '&::-webkit-scrollbar-thumb': {
