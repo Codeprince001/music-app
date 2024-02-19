@@ -2,35 +2,42 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { DetailsHeader, Error, Loader, RelatedSongs } from "../components";
 import { setActiveSong, playPause } from "../redux/features/playerSlice";
-import { ShazamCoreApi, useGetSongDetailsQuery } from "../redux/services/shazamCore";
+import { ShazamCoreApi } from "../redux/services/shazamCore";
 import { useEffect, useState } from "react";
-import { unwrapResult } from "@reduxjs/toolkit";
 
 const SongDetails = () => {
   const dispatch = useDispatch();
   const { songid } = useParams();
   const [songDetailData, setSongDetailData] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState();
   const [lyricsId, setLyricsId] = useState();
-  const [title, setTitle] = useState();
-  const [shazamSongId, setShazamSongId] = useState();
-  const [artistArtwork, setArtistArtwork] = useState();
-  const { setActiveSong, isPlaying } = useSelector((state) => state.player);
+  const [artistData, setArtistData] = useState({});
+  const { activeSong, isPlaying } = useSelector((state) => state.player);
+
+
+
+  const handlePauseClick = () => {
+    dispatch(playPause(false));
+  };
+
+  const handlePlayClick = (song, i) => {
+    dispatch(setActiveSong({ song, data, i }));
+    dispatch(playPause(true));
+  };
+
 
   useEffect(() => {
     let Mounted = false;
     dispatch(ShazamCoreApi.endpoints.getSongDetails.initiate(songid), { forceRefetch: true }).unwrap()
       .then(result => {
-        setIsLoading(true);
+        setData(result);
         setSongDetailData(result);
         // get song lyrics id from fetched data to access song lyrics by id
         setLyricsId(result?.resources?.[`shazam-songs`]?.[songid].relationships?.lyrics?.data[0].id);
-        setArtistArtwork(result?.resources?.[`shazam-songs`]?.[songid].attributes?.images?.artistAvatar);
-        setTitle(result?.resources?.[`shazam-songs`]?.[songid].attributes?.title);
-        console.log(lyricsId);
+
+        setArtistData({ ...artistData, relatedSongId: result?.resources?.[`shazam-songs`]?.[songid].relationships?.["related-tracks"]?.data[0].id, artist: result?.resources?.[`shazam-songs`]?.[songid].attributes?.artist, title: result?.resources?.[`shazam-songs`]?.[songid].attributes?.title, artistArtwork: result?.resources?.[`shazam-songs`]?.[songid].attributes?.images, });
       }).catch(error => {
         console.log(error);
-        setIsLoading(false);
       });
 
     return () => {
@@ -38,18 +45,21 @@ const SongDetails = () => {
     };
   }, [dispatch, songid]);
 
-  console.log(shazamSongId);
+  console.log(artistData);
+
 
 
   return (
-    <div className="flex flex-col">
-      <DetailsHeader artistArtwork={artistArtwork} songData={songDetailData} songid={songid} songDetailId={shazamSongId} title={title} />
+    <div className="flex flex-col relative">
+      <div className="sticky top-0 z-10">
+        <DetailsHeader songData={songDetailData} songid={songid} artistData={artistData} />
+      </div>
 
       <div className="mb-10">
         <h2 className="text-white text-3xl font-bold">Lyrics:</h2>
       </div>
 
-      <div className="mt-5 w-[500px] m-auto">
+      <div className="w-[500px] m-auto">
         {
           songDetailData ? <p className="text-white text-1xl font-bold text-center">{songDetailData?.resources?.lyrics?.[lyricsId]?.attributes?.text.map((line, index) => {
             return <p key={index}>{line}</p>;
@@ -57,6 +67,12 @@ const SongDetails = () => {
             : <p className="text-white text-3xl font-bold text-center">No Lyrics</p>
         }
       </div>
+
+      {
+        Object.keys(artistData).length > 0 ?
+          <RelatedSongs artistData={artistData} isPlaying={isPlaying} activeSong={activeSong} handlePauseClick={handlePauseClick} handlePlayClick={handlePlayClick} />
+          : "No Related Songs"
+      }
     </div>
   );
 };
