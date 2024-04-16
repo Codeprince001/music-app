@@ -8,7 +8,6 @@ const RelatedSongs = ({ activeSong,
   handlePlayClick, isPlaying, artistData }) => {
 
 
-  console.log(artistData.relatedSongId);
   const { data, isLoading } = useGetSongRelatedQuery("track-similarities-id-668834911");
 
 
