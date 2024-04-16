@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 
 
-const DetailsHeader = ({ artistArtwork, songData, title, artistData }) => {
+const DetailsHeader = ({ artistData, }) => {
 
 
   return (
