@@ -39,9 +39,12 @@ export const ShazamCoreApi = createApi({
     }),
     getSongRelated: builder.query({
       query: (songid) => `https://shazam.p.rapidapi.com/shazam-songs/list-similarities?id=${songid}`
+    }),
+    getArtistDetails: builder.query({
+      query: (artistId) => `https://shazam.p.rapidapi.com/artists/get-top-songs?id=${artistId}`
     })
   })
 });
 
 
-export const { useGetTopChartsQuery, useGetSongDetailsQuery, useGetSongRelatedQuery } = ShazamCoreApi;
+export const { useGetTopChartsQuery, useGetSongDetailsQuery, useGetSongRelatedQuery, useGetArtistDetailsQuery } = ShazamCoreApi;
